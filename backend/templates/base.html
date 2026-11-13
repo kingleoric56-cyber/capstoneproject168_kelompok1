@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{% block title %}Klasifikasi Penyakit Daun Tomat{% endblock %}</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@300;400;600;700&family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<header class="site-header">
+    <nav class="navbar">
+        <a href="{{ url_for('index') }}" class="navbar-brand">
+            <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Logo" class="navbar-logo">
+            <span>Sistem<em>Informasi</em></span>
+        </a>
+
+        <button class="navbar-toggle" id="navbarToggle" aria-label="Buka menu">&#9776;</button>
+
+        <div class="navbar-menu" id="navbarMenu">
+            <a href="{{ url_for('index') }}" class="{% block nav_home %}{% endblock %}">Home</a>
+            <a href="{{ url_for('klasifikasi') }}" class="{% block nav_klasifikasi %}{% endblock %}">Klasifikasi MKNN</a>
+            <span class="navbar-user">{{ nama_mahasiswa }}</span>
+        </div>
+    </nav>
+</header>
+
+<main>
+    {% with messages = get_flashed_messages() %}
+        {% if messages %}
+            <div class="flash-container">
+                {% for message in messages %}
+                    <div class="flash-message">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+    {% endwith %}
+
+    {% block content %}{% endblock %}
+</main>
+
+<footer class="footer-area">
+    <div class="footer-copyright">
+        <p>Sistem Klasifikasi Penyakit Daun Tomat &mdash; Modified K-Nearest Neighbor (HSV + LBP) &copy; 2026</p>
+    </div>
+</footer>
+
+<script>
+document.getElementById('navbarToggle').addEventListener('click', function () {
+    document.getElementById('navbarMenu').classList.toggle('open');
+});
+</script>
+
+</body>
+</html>

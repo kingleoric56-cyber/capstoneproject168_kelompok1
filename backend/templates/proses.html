@@ -1,0 +1,101 @@
+{% extends "base.html" %}
+{% block title %}Proses Klasifikasi - Penyakit Daun Tomat{% endblock %}
+{% block nav_klasifikasi %}active{% endblock %}
+
+{% block content %}
+<section class="proses-page">
+    <h1>Proses Klasifikasi Dengan Model Modified K-Nearest Neighbor (MKNN)</h1>
+    <p class="proses-subtitle">Operasi Preprocessing Resize &amp; Normalisasi</p>
+
+    <!-- ============ 1. PREPROCESSING ============ -->
+    <div class="proses-grid">
+        <div class="proses-col">
+            <img src="{{ original_image }}" alt="Citra asli" class="proses-image">
+            <h4>Matriks Citra</h4>
+            <pre class="matrix-box">{{ matriks_citra }}</pre>
+        </div>
+        <div class="proses-col">
+            <img src="{{ resized_image }}" alt="Citra hasil preprocessing" class="proses-image">
+            <h4>Matriks Preprocessing (dinormalisasi 0-1)</h4>
+            <pre class="matrix-box">{{ matriks_preprocessing }}</pre>
+        </div>
+    </div>
+    <p class="proses-note">
+        Catatan: citra hasil resize di atas selanjutnya dikonversi ke ruang warna
+        <strong>HSV</strong> untuk ekstraksi fitur warna, dan ke <strong>Grayscale</strong>
+        untuk ekstraksi fitur tekstur Local Binary Pattern (LBP).
+    </p>
+
+    <!-- ============ 2. EKSTRAKSI FITUR ============ -->
+    <h2 class="proses-section-title">Ekstraksi Fitur</h2>
+    <div class="proses-grid">
+        <div class="proses-col">
+            <h4>Fitur Warna &mdash; HSV Color Moment (9 fitur)</h4>
+            <table class="feature-table">
+                <thead><tr><th>Komponen</th><th>Nilai</th></tr></thead>
+                <tbody>
+                {% for label, value in hsv_table %}
+                    <tr><td>{{ label }}</td><td>{{ value }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        <div class="proses-col">
+            <h4>Fitur Tekstur &mdash; Local Binary Pattern (5 fitur)</h4>
+            <table class="feature-table">
+                <thead><tr><th>Komponen</th><th>Nilai</th></tr></thead>
+                <tbody>
+                {% for label, value in lbp_table %}
+                    <tr><td>{{ label }}</td><td>{{ value }}</td></tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- ============ 3. PERHITUNGAN MKNN ============ -->
+    <h2 class="proses-section-title">Klasifikasi Modified K-Nearest Neighbor (K = {{ k }})</h2>
+    <div class="proses-col-full">
+        <h4>{{ k }} Tetangga Terdekat</h4>
+        <table class="feature-table">
+            <thead>
+                <tr><th>Rank</th><th>Kelas Tetangga</th><th>Jarak Euclidean</th><th>Nilai Validitas</th><th>Weighted Vote</th></tr>
+            </thead>
+            <tbody>
+            {% for row in neighbor_rows %}
+                <tr>
+                    <td>{{ row.rank }}</td>
+                    <td>{{ row.label }}</td>
+                    <td>{{ row.distance }}</td>
+                    <td>{{ row.validity }}</td>
+                    <td>{{ row.weight }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+        <h4 class="mt-24">Total Weighted Voting per Kelas</h4>
+        <table class="feature-table">
+            <thead><tr><th>Kelas</th><th>Total Weighted Vote</th><th>Persentase</th></tr></thead>
+            <tbody>
+            {% for row in voting_table %}
+                <tr>
+                    <td>{{ row.label }}</td>
+                    <td>{{ row.weight }}</td>
+                    <td>{{ row.percent }}%</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+
+    </div>
+
+    <!-- ============ 4. HASIL AKHIR ============ -->
+    <div class="proses-final-box">
+        <h3>Hasil Klasifikasi</h3>
+        <p class="proses-final-label">{{ final_label }} ({{ final_percent }}%)</p>
+    </div>
+
+    <a href="{{ url_for('klasifikasi') }}" class="btn-primary back-btn">&larr; Menu Klasifikasi MKNN</a>
+</section>
+{% endblock %}

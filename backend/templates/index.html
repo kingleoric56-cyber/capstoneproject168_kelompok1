@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}Beranda - Klasifikasi Penyakit Daun Tomat{% endblock %}
+{% block nav_home %}active{% endblock %}
+
+{% block content %}
+
+<!-- ============ HERO ============ -->
+<section class="hero">
+    <div class="hero-inner">
+        <div class="hero-text">
+            <h1>Klasifikasi Penyakit Daun Tomat</h1>
+            <p class="hero-desc">
+                Diagnosis dini penyakit tanaman yang biasanya dilakukan ahli di
+                laboratorium kini bisa dibantu secara otomatis. Sistem ini mengekstrak
+                fitur warna <em>Hue, Saturation, Value</em> (HSV) dan fitur tekstur
+                <em>Local Binary Pattern</em> (LBP) dari citra daun, lalu
+                mengklasifikasikannya dengan algoritma <em>Modified K-Nearest Neighbor</em>
+                (MKNN).
+            </p>
+            <div class="hero-actions">
+                <a href="{{ url_for('klasifikasi') }}" class="btn-pill btn-pill-primary">Mulai Klasifikasi</a>
+                <a href="#tentang-sistem" class="btn-pill btn-pill-outline">Pelajari Metodenya</a>
+            </div>
+        </div>
+        <div class="hero-image">
+            <div class="hero-image-blob"></div>
+        </div>
+    </div>
+</section>
+
+<!-- ============ OBJEK PENELITIAN ============ -->
+<section class="objek-penelitian">
+    <p class="section-eyebrow">Objek Penelitian</p>
+    <h2 class="section-title">Tiga Kelas yang Dikenali Sistem</h2>
+    <div class="card-grid">
+        {% for label, info in info_penyakit.items() %}
+        <div class="card">
+            <div class="card-image card-image-{{ info.slug }}"></div>
+            <div class="card-body">
+                <h3>{{ label }}</h3>
+                <p>{{ info.gejala }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+<!-- ============ TENTANG SISTEM ============ -->
+<section class="about-section" id="tentang-sistem">
+    <div class="about-inner">
+        <div class="about-image">
+            <div class="about-image-blob"></div>
+        </div>
+        <div class="about-text">
+            <p class="eyebrow">Tentang Sistem Ini</p>
+            <h2>Modified K-Nearest Neighbor + HSV + LBP</h2>
+            <p>
+                Modified K-Nearest Neighbor (MKNN) adalah pengembangan dari algoritma
+                KNN tradisional dengan tambahan perhitungan nilai validitas data latih
+                dan pembobotan (weighted voting) berdasarkan jarak Euclidean, sehingga
+                lebih tahan terhadap data pencilan (outlier).
+            </p>
+            <p>
+                Fitur warna diambil dari ruang warna HSV (Hue, Saturation, Value) berupa
+                mean, standar deviasi, dan skewness tiap komponen. Fitur tekstur diambil
+                dari statistik histogram Local Binary Pattern (LBP): mean, variance,
+                skewness, kurtosis, dan entropy.
+            </p>
+            <a href="{{ url_for('klasifikasi') }}" class="btn-pill btn-pill-outline">Coba Klasifikasi</a>
+        </div>
+    </div>
+</section>
+
+<!-- ============ TECH BADGES ============ -->
+<section class="tech-section">
+    <p class="tech-caption">Dibangun dengan</p>
+    <div class="tech-badges">
+        <span class="tech-badge">Python</span>
+        <span class="tech-badge">OpenCV</span>
+        <span class="tech-badge">scikit-image</span>
+        <span class="tech-badge">scikit-learn</span>
+        <span class="tech-badge">Flask</span>
+    </div>
+</section>
+
+{% endblock %}

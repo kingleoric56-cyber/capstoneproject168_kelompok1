@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block title %}Hasil Klasifikasi - Penyakit Daun Tomat{% endblock %}
+{% block nav_klasifikasi %}active{% endblock %}
+
+{% block content %}
+<section class="hasil-page">
+    <h1>Analisis Klasifikasi Dengan Model MKNN</h1>
+
+    <div class="hasil-container">
+        <div class="hasil-image-box">
+            <img src="{{ image_path }}" alt="Citra daun tomat yang diunggah">
+        </div>
+
+        <div class="hasil-summary-box">
+            <h3>Hasil Klasifikasi</h3>
+            <p class="hasil-label">{{ pred_label }}</p>
+
+            <h4>Tingkat Keyakinan</h4>
+            <ul class="probability-list">
+                {% for label, prob in probabilities.items()|sort(attribute=1, reverse=True) %}
+                <li>
+                    <span class="prob-label">{{ label }}</span>
+                    <div class="prob-bar-bg">
+                        <div class="prob-bar-fill" style="width: {{ prob }}%;"></div>
+                    </div>
+                    <span class="prob-value">{{ prob }}%</span>
+                </li>
+                {% endfor %}
+            </ul>
+            <p class="k-info">Nilai K yang digunakan (otomatis): <strong>{{ best_k }}</strong></p>
+        </div>
+    </div>
+
+    <div class="hasil-detail">
+        <h3>Gejala</h3>
+        <p>{{ gejala }}</p>
+
+        <h3>Penyebab</h3>
+        <p>{{ penyebab }}</p>
+
+        <h3>Penanganan</h3>
+        <p>{{ penanganan }}</p>
+    </div>
+
+    <div class="hasil-actions">
+        <a href="{{ url_for('klasifikasi') }}" class="btn-secondary">&larr; Back</a>
+        <a href="{{ url_for('proses_klasifikasi', filename=image_filename) }}" class="btn-primary">Lihat Proses Klasifikasi</a>
+    </div>
+</section>
+{% endblock %}

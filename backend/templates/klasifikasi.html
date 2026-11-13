@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Klasifikasi - Penyakit Daun Tomat{% endblock %}
+{% block nav_klasifikasi %}active{% endblock %}
+
+{% block content %}
+<section class="klasifikasi-page">
+    <h1>Klasifikasi Dengan Model Modified K-Nearest Neighbor (MKNN)</h1>
+
+    {% if model_error %}
+        <div class="alert-error">{{ model_error }}</div>
+    {% else %}
+        <p class="k-info">Nilai K optimal (ditentukan otomatis saat training): <strong>{{ best_k }}</strong></p>
+    {% endif %}
+
+    <div class="klasifikasi-container">
+        <div class="upload-box">
+            <form action="{{ url_for('predict') }}" method="post" enctype="multipart/form-data" id="upload-form">
+                <div class="dropzone" id="dropzone">
+                    <img id="preview-image" src="" alt="" style="display:none;">
+                    <span id="dropzone-text">Seret &amp; letakkan gambar daun tomat di sini, atau klik untuk memilih file</span>
+                </div>
+                <input type="file" name="file" id="file-input" accept=".jpg,.jpeg,.png" hidden>
+                <div class="upload-actions">
+                    <label for="file-input" class="btn-secondary">Pilih File</label>
+                    <button type="submit" class="btn-primary" {% if model_error %}disabled{% endif %}>Predict</button>
+                </div>
+            </form>
+        </div>
+
+        <div class="instruction-box">
+            <h3>Usage Instruction</h3>
+            <ol>
+                <li>Pilih citra uji daun tomat dengan menekan tombol <strong>"Pilih File"</strong>.</li>
+                <li>Pastikan citra menampilkan permukaan daun secara jelas dan tidak buram.</li>
+                <li>Tekan tombol <strong>"Predict"</strong> untuk memproses citra dan menampilkan hasil klasifikasi.</li>
+            </ol>
+        </div>
+    </div>
+</section>
+
+<script>
+const fileInput = document.getElementById('file-input');
+const dropzone = document.getElementById('dropzone');
+const previewImage = document.getElementById('preview-image');
+const dropzoneText = document.getElementById('dropzone-text');
+
+function showPreview(file) {
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function (e) {
+        previewImage.src = e.target.result;
+        previewImage.style.display = 'block';
+        dropzoneText.style.display = 'none';
+    };
+    reader.readAsDataURL(file);
+}
+
+dropzone.addEventListener('click', () => fileInput.click());
+
+fileInput.addEventListener('change', () => {
+    showPreview(fileInput.files[0]);
+});
+
+dropzone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    dropzone.classList.add('dragover');
+});
+
+dropzone.addEventListener('dragleave', () => {
+    dropzone.classList.remove('dragover');
+});
+
+dropzone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    dropzone.classList.remove('dragover');
+    if (e.dataTransfer.files.length) {
+        fileInput.files = e.dataTransfer.files;
+        showPreview(fileInput.files[0]);
+    }
+});
+</script>
+{% endblock %}
